@@ -17,6 +17,9 @@ test_images_dir = 'imagenes micro'
 # Test mode flag
 test_mode = True
 
+# Time to sleep parameter
+time_to_sleep = 10
+
 # Number of ORB features to extract per image
 # nfeatures = 500
 # descriptor_size = 32  # ORB descriptor size
@@ -80,7 +83,7 @@ if __name__ == "__main__":
         combined_features = orb_flattened.astype(np.float32)
 
         # Search for the top six most similar images in the FAISS index
-        distances, indices = index.search(np.array([combined_features]), k=6)
+        distances, indices = index.search(np.array([combined_features]), k=5)
         most_similar_indices = indices[0]
         most_similar_image_names = [image_names[i] for i in most_similar_indices]
         most_similar_image_paths = [os.path.join(frames_dir, name) for name in most_similar_image_names]
@@ -88,29 +91,29 @@ if __name__ == "__main__":
         # Filter out images that are in the last 18 selected images
         filtered_image_names = [name for name in most_similar_image_names if name not in last_selected_images[-18:]]
 
-        # Randomly select two images from the remaining images
-        if len(filtered_image_names) >= 2:
-            selected_image_names = random.sample(filtered_image_names, 2)
+        # Randomly select one image from the remaining images
+        if len(filtered_image_names) >= 1:
+            selected_image_name = random.choice(filtered_image_names)
         else:
-            selected_image_names = filtered_image_names
+            selected_image_name = filtered_image_names[0] if filtered_image_names else None
 
-        # Load and display the selected images
-        selected_images = [cv2.imread(os.path.join(frames_dir, name)) for name in selected_image_names]
+        if selected_image_name:
+            # Load and display the selected image
+            selected_image = cv2.imread(os.path.join(frames_dir, selected_image_name))
 
-        for i, selected_image in enumerate(selected_images):
-            selected_frame = selected_image_names[i].split('frameproportion_')[1].split('.')[0]
-            file_short_name = selected_image_names[i].split('_frameproportion_')[0]
+            selected_frame = selected_image_name.split('frameproportion_')[1].split('.')[0]
+            file_short_name = selected_image_name.split('_frameproportion_')[0]
             
             # Send selected_frame and file_short_name over OSC
-            osc_client.send_message(f"/selected_frame_{i+1}", selected_frame)
-            osc_client.send_message(f"/file_short_name_{i+1}", file_short_name)
+            osc_client.send_message("/selected_frame", selected_frame)
+            osc_client.send_message("/file_short_name", file_short_name)
 
-            cv2.imshow(f'Selected Image {i+1}', selected_image)
+            cv2.imshow('Selected Image', selected_image)
 
-        # Update the list of last selected images
-        last_selected_images.extend(selected_image_names)
-        if len(last_selected_images) > 18:
-            last_selected_images = last_selected_images[-18:]
+            # Update the list of last selected images
+            last_selected_images.append(selected_image_name)
+            if len(last_selected_images) > 18:
+                last_selected_images = last_selected_images[-18:]
 
         cv2.imshow('Camera Frame' if not test_mode else 'Test Image Frame', frame)
 
@@ -118,7 +121,7 @@ if __name__ == "__main__":
             break
 
         # Sleep for one second
-        time.sleep(1)
+        time.sleep(time_to_sleep)
 
     if not test_mode:
         cap.release()
