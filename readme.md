@@ -1,8 +1,8 @@
-# Project README
+# codex-microscopic-exploration
 
-## Project Overview
 
-This project is designed to select the most similar image from camera input of microscope images. It uses ORB (Oriented FAST and Rotated BRIEF) feature extraction and FAISS (Facebook AI Similarity Search) to identify and retrieve images that are most similar to a given query image. The `codex_live_classifier.py` script can operate in two modes: test mode (using pre-extracted test images) and live mode (using a webcam feed).
+This codebase is designed to select the most similar image from camera input of microscope images. It uses ORB (Oriented FAST and Rotated BRIEF) feature extraction and FAISS (Facebook AI Similarity Search) to identify and retrieve images that are most similar to a given query image. The `codex_live_classifier.py` script can operate in two modes: test mode (using pre-extracted test images) and live mode (using a webcam feed).
+
 ### Files and Directories
 
 - **`codex_live_classifier.py`**: Main script to run the image classification.
