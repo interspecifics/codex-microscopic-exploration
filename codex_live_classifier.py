@@ -3,6 +3,7 @@ import numpy as np
 import faiss
 import os
 import time
+import random
 from pythonosc import udp_client
 
 from orb_feature_extraction import nfeatures, descriptor_size, fixed_num_descriptors
@@ -54,12 +55,12 @@ osc_client = udp_client.SimpleUDPClient("127.0.0.1", 5005)
 
 if test_mode:
     test_image_names = [f for f in os.listdir(test_images_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+    random.shuffle(test_image_names)
     test_image_index = 0
 else:
     # Open the camera
     cap = cv2.VideoCapture(0)
 
-import random
 
 if __name__ == "__main__":
     last_selected_images = []
