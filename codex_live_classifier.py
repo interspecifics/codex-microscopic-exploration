@@ -15,7 +15,7 @@ FRAMES_DIR = 'extracted_frames'
 TEST_IMAGES_DIR = 'imagenes micro'
 TEST_MODE = False
 TIME_TO_SLEEP = 10
-DISPLAY_MODEL_SELECTION = True
+DISPLAY_MODEL_SELECTION = False
 STILL_THRESHOLD = 5  # seconds
 CAPTURE_INTERVAL = 20  # seconds
 OSC_IP = "127.0.0.1"
@@ -79,7 +79,7 @@ def main():
 
     # Initialize Pygame
     pygame.init()
-    screen = pygame.display.set_mode((1080, 1920), pygame.NOFRAME, display=DISPLAY_INDEX)
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN, display=DISPLAY_INDEX)
 
     if TEST_MODE:
         test_image_names = [f for f in os.listdir(TEST_IMAGES_DIR) if f.endswith(('.png', '.jpg', '.jpeg'))]
